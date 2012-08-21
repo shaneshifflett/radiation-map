@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            body{
+                font-family: Georgia,Cambria,"Times New Roman",Times,serif;
+                margin: 0;
+            }
+            .leaflet-control-zoom{
+                z-index: 100;
+                top: 45px;
+            }
+            #map-info-container #map{
+                height: 100%;
+                width: 100%;
+                background-color: rgba(205,201,201, 0.2);
+            }
+            #map-info-container #controls{
+                text-align: center;
+                padding-top: 15px;
+                padding-bottom: 15px;
+                color: #ddd;
+                position: absolute;
+                z-index: 99;
+                width: 100%;
+                border-bottom: 1px solid #494949;
+                -webkit-box-shadow:  0px 1px 2px 0px rgba(0, 0, 0, .5);
+                box-shadow:  0px 1px 2px 0px rgba(0, 0, 0, .5);                        
+                background: rgb(76,76,76); /* Old browsers */
+                background: -moz-linear-gradient(top,  rgba(76,76,76,1) 0%, rgba(89,89,89,1) 12%, rgba(73,73,73,1) 50%, rgba(43,43,43,1) 83%, rgba(44,44,44,1) 96%, rgba(43,43,43,1) 100%, rgba(28,28,28,1) 100%); /* FF3.6+ */
+                background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(76,76,76,1)), color-stop(12%,rgba(89,89,89,1)), color-stop(50%,rgba(73,73,73,1)), color-stop(83%,rgba(43,43,43,1)), color-stop(96%,rgba(44,44,44,1)), color-stop(100%,rgba(43,43,43,1)), color-stop(100%,rgba(28,28,28,1))); /* Chrome,Safari4+ */
+                background: -webkit-linear-gradient(top,  rgba(76,76,76,1) 0%,rgba(89,89,89,1) 12%,rgba(73,73,73,1) 50%,rgba(43,43,43,1) 83%,rgba(44,44,44,1) 96%,rgba(43,43,43,1) 100%,rgba(28,28,28,1) 100%); /* Chrome10+,Safari5.1+ */
+                background: -o-linear-gradient(top,  rgba(76,76,76,1) 0%,rgba(89,89,89,1) 12%,rgba(73,73,73,1) 50%,rgba(43,43,43,1) 83%,rgba(44,44,44,1) 96%,rgba(43,43,43,1) 100%,rgba(28,28,28,1) 100%); /* Opera 11.10+ */
+                background: -ms-linear-gradient(top,  rgba(76,76,76,1) 0%,rgba(89,89,89,1) 12%,rgba(73,73,73,1) 50%,rgba(43,43,43,1) 83%,rgba(44,44,44,1) 96%,rgba(43,43,43,1) 100%,rgba(28,28,28,1) 100%); /* IE10+ */
+                background: linear-gradient(top,  rgba(76,76,76,1) 0%,rgba(89,89,89,1) 12%,rgba(73,73,73,1) 50%,rgba(43,43,43,1) 83%,rgba(44,44,44,1) 96%,rgba(43,43,43,1) 100%,rgba(28,28,28,1) 100%); /* W3C */
+                filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4c4c4c', endColorstr='#1c1c1c',GradientType=0 ); /* IE6-9 */
+            }
+            #map-info-container #controls a{
+                color: white;
+                text-decoration: none;
+            }
+            #map-info-container #controls span{
+            }
+            #map-info-container{
+                height: 100%;
+                width: 100%;
+                position: absolute;
+            }
+            #map-info-container #annotation{
+                width: 35%;
+                right: 0;
+                position: absolute;
+                z-index: 2;
+                top: 25px;
+                padding: 0 5px 0 5px;
+                background: rgba(255, 255, 255, 0.85);
+            }
+            #map-info-container #annotation ul{
+                padding: 10px;
+                list-style-type: none;
+            }
+            #map-info-container #annotation li{
+                padding-top: 2.5px;
+                padding-bottom: 2.5px;
+            }
+            #map-info-container #annotation .annotation-item{
+                font-size: 13px;
+            }
+            #map-info-container #annotation .annotation-item span{
+                font-style:italic;
+            }
+            #map-info-container #legend{
+                width: 20%;
+                position: absolute;
+                z-index: 120;
+                bottom: 0;
+                float: left;
+                padding: 10px;
+                border: solid 1px black;
+                background: rgba(255, 255, 255, 0.85);
+            }
+        </style>
+        
+        <link rel="stylesheet" href="https://raw.github.com/mapbox/wax/master/ext/leaflet.css" />
+        <link rel="stylesheet" href="leaflet.0.3.1/leaflet.css" />
+        <link rel='stylesheet' href="jquery-ui-1.8.19.custom/css/smoothness/jquery-ui-1.8.19.custom.css"/>
+        <script type="text/javascript" src="jquery-ui-1.8.19.custom/js/jquery-1.7.1.min.js"></script>
+        <script type="text/javascript" src="jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"></script>
+        <script type="text/javascript" src="leaflet.0.3.1/leaflet-src.js"></script>
+        <script type="text/javascript" src="https://raw.github.com/mapbox/wax/master/dist/wax.leaf.js"></script>
+        <script type="text/javascript" src="underscore-min.js"></script>
+        <script type="text/javascript" src="raphael-min.js"></script>
+        <script type="text/javascript" src="layer-interaction.js"></script>
+        <script type="text/javascript" src="annotations.js"></script>
+        <script type="text/javascript" src="map-legend-view.js"></script>
+        <script type="text/javascript">
+            var baseTiles = {
+                tilejson: "1.0.0",
+                scheme: "tms",
+                tiles: ["http://localhost:8000/static/background/1.0.0/radiation/{z}/{x}/{y}.png"]
+            };
+            var irTiles = {
+                tilejson: "1.0.0",
+                scheme: "tms",
+                template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
+                tiles: ["http://localhost:8000/static/irradiated/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://localhost:8000/static/irradiated/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+            };
+            var newIdTiles = {
+                tilejson: "1.0.0",
+                scheme: "tms",
+                template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
+                tiles: ["http://localhost:8000/static/newid2/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://localhost:8000/static/newid2/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+            };
+            var pastIdTiles = {
+                tilejson: "1.0.0",
+                scheme: "tms",
+                template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
+                tiles: ["http://localhost:8000/static/past_id/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://localhost:8000/static/past_id/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+            };
+            var template = null;
+            var printAnnotation = function(obj){
+                $("#annotation").show();
+                var variables = obj.textSegments;
+                variables['name'] = obj.name
+                $($("#annotation")[0]).html(template(variables));
+                $($("#annotation ul")[0]).effect('highlight', {}, 100);
+            };
+            var hoverCallback = function(data){
+
+            };
+            var clickCallback = function(data){
+
+            };
+            $(document).ready(function(){
+                $("#annotation").hide();
+                var southWest = new L.LatLng(37.78211205989559,-122.4105262756347),
+                northEast = new L.LatLng(37.87675039049737,-122.29156494140625),
+                bounds = new L.LatLngBounds(southWest, northEast);
+
+                template = _.template($("#poi-print-template").html());
+                var poi = [];
+                var LeafIcon = L.Icon.extend({
+                        iconUrl: 'marker-radioactive.png',
+                    });
+                var radIcon = new LeafIcon();
+                $("#map-info-container").css("height", $(document).height() + 'px');
+                $("#map-info-container").css("width", $(document).width() + 'px');
+                
+                var map = new L.Map("map", {scrollWheelZoom: false,
+                    zoomControl: true, dragging: true, doubleClickZoom: true,
+                    minZoom:13, maxZoom: 18, attributionControl: false,
+                    maxBounds: bounds
+                });
+                map.on('click', function(e){
+                    console.log(e.latlng.lat + ',' + e.latlng.lng);
+                })
+                var center = new L.LatLng(37.82337871943924,-122.3697566986084 );
+                var base = new LayerInteraction(baseTiles, map, 0, undefined, undefined, true);
+                LayerInteraction.objects['ir'] = new LayerInteraction(irTiles, map, 1, hoverCallback, clickCallback, true);
+                LayerInteraction.objects['newId'] = new LayerInteraction(newIdTiles, map, 2, hoverCallback, clickCallback, true);
+                LayerInteraction.objects['pastId'] = new LayerInteraction(pastIdTiles, map, 3, hoverCallback, clickCallback, true);
+                map.setView(center, 15);
+
+                var toPlot = _.filter(annotations, function(obj){
+                    return obj.type == 'point';
+                });
+
+                _.each(toPlot, function(obj){
+                    var point = new L.LatLng(obj.latlng[0], obj.latlng[1]);
+                    var marker = new L.Marker(point, {icon: radIcon});
+                    marker.on('click', function(e){
+                        printAnnotation(obj);
+                    });
+                    obj.marker = marker;
+                    map.addLayer(marker);
+                });
+
+                var layerToggler = function(e){
+                    var target = e.srcElement || e.target;
+                    var id = $(target).attr('id');
+                    if(id == 'poi'){
+                        _.each(toPlot, function(obj){
+                            if(obj.marker.hidden == true){
+                                $($(obj.marker._icon)[0]).show();
+                                $($(obj.marker._shadow)[0]).show();
+                            } else{
+                                $($(obj.marker._icon)[0]).hide();
+                                $($(obj.marker._shadow)[0]).hide();
+                            }
+                            obj.marker.hidden = !obj.marker.hidden;
+                        });
+                    } else{
+                        var obj = LayerInteraction.objects[id];
+                        if(obj.hidden){
+                            obj.setHidden();
+                            LayerInteraction.redrawVisibleLayers();
+                        }else{
+                            obj.hide();
+                        }
+                    }
+                    if($(target).css('text-decoration') === 'line-through'){
+                        $(target).css('text-decoration', '');
+                    } else {
+                        $(target).css('text-decoration', 'line-through');
+                    }
+                };
+                $("#controls a").unbind('click', layerToggler).bind('click', layerToggler);
+                var values = [
+                    { colorStr: "#9F6", text:"Irradiated sites"},
+                    { colorStr: "#ae8", text: "Newly identified impacted sites"},
+                    { colorStr: "#FF0000", text: "Previously known impacted sites"},
+                    { colorStr: "#FFFF00", text: "Points of Interest"}
+                ];
+                var mlv = new MapLegendView("#legend", values, 'Potentially radioactive Sites on Treasure Island', 'Source: U.S. Navy and Treasure Island Development Authority');
+            });
+        </script>
+
+    </head>
+    <body>
+        <div id="map-info-container">
+            <div id="controls">
+                <span>Showing: </span>
+                <a href="#" id="poi" class="visible-layer">Points of Interest</a> |
+                <a href="#" id="ir" class="visible-layer">Irradiated Sites</a> |
+                <a href="#" id="newId" class="visible-layer">Newly Identified Sites</a> |
+                <a href="#" id="pastId" class="visible-layer">Previously Identified Sites</a>
+            </div>
+            <div id="annotation"></div>
+            <div id="map"></div>
+            <div id="legend"></div>
+        </div>
+        <script type="text/template" id="poi-print-template">
+            <ul>
+                <li class="annotation-item"><b><%= name %></b></li>
+                <li class="annotation-item"><span>Currently is:</span> <%= currently %></li>
+                <li class="annotation-item"><span>Likelihood of contamination:</span> <%= contaminationLikelihood %></li>
+                <li class="annotation-item"><span>What happened:</span> <%= cause %></li>
+                <li class="annotation-item"><span>Potential contaminents:</span> <%= potentialContaminents %></li>
+                <li class="annotation-item"><span>Recommended steps:</span> <%= recommendedSteps %></li>
+            </ul>
+        </script>
+    </body>
+</html>
+
