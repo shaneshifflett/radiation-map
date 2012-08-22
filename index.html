@@ -93,6 +93,8 @@
         <script type="text/javascript" src="layer-interaction.js"></script>
         <script type="text/javascript" src="annotations.js"></script>
         <script type="text/javascript" src="map-legend-view.js"></script>
+        <script type="text/javascript" src="d3.ie-min.js"></script>
+        <script type="text/javascript" src="elevated_lvls.geojson"></script>
         <script type="text/javascript">
             var baseTiles = {
                 tilejson: "1.0.0",
@@ -103,8 +105,8 @@
                 tilejson: "1.0.0",
                 scheme: "tms",
                 template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
-                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-irradiated/1.0.0/radiation/{z}/{x}/{y}.png"],
-                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-irradiated/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-ir/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-ir/1.0.0/radiation/{z}/{x}/{y}.grid.json']
             };
             var newIdTiles = {
                 tilejson: "1.0.0",
@@ -164,19 +166,57 @@
                 LayerInteraction.objects['pastId'] = new LayerInteraction(pastIdTiles, map, 3, hoverCallback, clickCallback, true);
                 map.setView(center, 15);
 
+               var plotElevatedRadiation = function(){
+                    var dotz = [];
+                    var minSize = _.min(elevatedLevels, function(obj){
+                        return obj.properties['ra226-level'];
+                    });
+                    var maxSize = _.max(elevatedLevels, function(obj){
+                        return obj.properties['ra226-level'];
+                    });
+                    var scale = d3.scale.linear()
+                        .domain([minSize.properties['ra226-level'], maxSize.properties['ra226-level']])
+                        .range([2, 10]); 
+                    var markerOptions = {
+                        radius: 3,
+                        fillColor: "#ff7800",
+                        color: "#000",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    };
+
+                    _.each(elevatedLevels, function(obj){
+                        var geojsonLayer = new L.GeoJSON(obj, {
+                            pointToLayer: function(latlng){
+                                markerOptions['radius'] = scale(obj.properties['ra226-level']);
+                                return new L.CircleMarker(latlng, markerOptions);
+                            }
+                        });
+                        map.addLayer(geojsonLayer);
+                        geojsonLayer.on('click', function(e){
+                            printElevatedLocation(obj);
+                        });
+                        dotz.push(geojsonLayer);
+                    });
+                };
                 var toPlot = _.filter(annotations, function(obj){
                     return obj.type == 'point';
                 });
-
-                _.each(toPlot, function(obj){
-                    var point = new L.LatLng(obj.latlng[0], obj.latlng[1]);
-                    var marker = new L.Marker(point, {icon: radIcon});
-                    marker.on('click', function(e){
-                        printAnnotation(obj);
+                var plotPOI = function(){
+                    _.each(toPlot, function(obj){
+                        var point = new L.LatLng(obj.latlng[0], obj.latlng[1]);
+                        var marker = new L.Marker(point, {icon: radIcon});
+                        marker.on('click', function(e){
+                            printAnnotation(obj);
+                        });
+                        obj.marker = marker;
+                        map.addLayer(marker);
                     });
-                    obj.marker = marker;
-                    map.addLayer(marker);
-                });
+                };
+
+                plotElevatedRadiation();
+                plotPOI();
 
                 var layerToggler = function(e){
                     var target = e.srcElement || e.target;
@@ -224,7 +264,7 @@
             <div id="controls">
                 <span>Showing: </span>
                 <a href="#" id="poi" class="visible-layer">Points of Interest</a> |
-                <a href="#" id="ir" class="visible-layer">Irradiated Sites</a> |
+                <a href="#" id="ir" class="visible-layer"> Installation Restoration Sites</a> |
                 <a href="#" id="newId" class="visible-layer">Newly Identified Sites</a> |
                 <a href="#" id="pastId" class="visible-layer">Previously Identified Sites</a>
             </div>
