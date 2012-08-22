@@ -62,12 +62,15 @@
                 position: absolute;
             }
             #elr-container #cur-level{
-                float: right;
+                float: left;
                 padding: 5px;
             }
             #elr-container #background-level{
                 float: right;
                 padding: 5px;
+            }
+            #elr-container .mult ul li span {
+                font-size: 20px;
             }
             #map-info-container #annotation ul{
                 padding: 10px;
@@ -130,8 +133,8 @@
                 tilejson: "1.0.0",
                 scheme: "tms",
                 template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
-                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-newid2/1.0.0/radiation/{z}/{x}/{y}.png"],
-                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-newid2/radiation/{z}/{x}/{y}.grid.json']
+                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-new_id/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-new_id/radiation/{z}/{x}/{y}.grid.json']
             };
             var pastIdTiles = {
                 tilejson: "1.0.0",
@@ -145,9 +148,9 @@
             var printElevatedLocation = function(obj){
                 $("#annotation").show();
                 var variables = {};
-                variables['multiplier'] = 3;
-                variables['cur'] = obj.properties['ra226-level'];
+                variables['cur'] = parseFloat(obj.properties['ra226-level']).toFixed(1);
                 variables['bg'] = obj.properties['background'];
+                variables['multiplier'] = (variables.cur / variables.bg).toFixed(1);
                 $("#annotation").html(elrTemplate(variables));
                 $("#annotation ul").effect('highlight', {}, 100);
             };
@@ -223,7 +226,7 @@
                                 }
                             });
                             map.addLayer(geojsonLayer);
-                            geojsonLayer.on('click', function(e){
+                            geojsonLayer.on('mouseover', function(e){
                                 printElevatedLocation(obj);
                             });
                             obj.marker = geojsonLayer;
@@ -322,11 +325,11 @@
         </script>
         <script type="text/template" id="elr-print-template">
             <ul>
-                <li>blahhhhh <%= multiplier %> x the background radiation</li>
-                <li>
+                <li></li>
+                <li> <%= cur %> / <%= bg %> = <span class="mult"><%= multiplier %></span> times the normal amount of background radiation.
                     <div id="elr-container">
-                        <div id="cur-level"><%= cur %></div>
-                        <div id="background-level"><%= bg %></div>
+                        <div id="cur-level"> VS.</div>
+                        <div id="background-level"></div>
                     </div>
                 </li>
             </ul>
