@@ -97,28 +97,28 @@
             var baseTiles = {
                 tilejson: "1.0.0",
                 scheme: "tms",
-                tiles: ["http://localhost:8000/static/background/1.0.0/radiation/{z}/{x}/{y}.png"]
+                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-background/1.0.0/radiation/{z}/{x}/{y}.png"]
             };
             var irTiles = {
                 tilejson: "1.0.0",
                 scheme: "tms",
                 template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
-                tiles: ["http://localhost:8000/static/irradiated/1.0.0/radiation/{z}/{x}/{y}.png"],
-                grids: ['http://localhost:8000/static/irradiated/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-irradiated/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-irradiated/1.0.0/radiation/{z}/{x}/{y}.grid.json']
             };
             var newIdTiles = {
                 tilejson: "1.0.0",
                 scheme: "tms",
                 template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
-                tiles: ["http://localhost:8000/static/newid2/1.0.0/radiation/{z}/{x}/{y}.png"],
-                grids: ['http://localhost:8000/static/newid2/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-newid2/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-newid2/radiation/{z}/{x}/{y}.grid.json']
             };
             var pastIdTiles = {
                 tilejson: "1.0.0",
                 scheme: "tms",
                 template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
-                tiles: ["http://localhost:8000/static/past_id/1.0.0/radiation/{z}/{x}/{y}.png"],
-                grids: ['http://localhost:8000/static/past_id/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-past_id/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-past_id/1.0.0/radiation/{z}/{x}/{y}.grid.json']
             };
             var template = null;
             var printAnnotation = function(obj){
