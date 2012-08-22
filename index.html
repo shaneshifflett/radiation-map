@@ -55,6 +55,17 @@
                 padding: 0 5px 0 5px;
                 background: rgba(255, 255, 255, 0.85);
             }
+            #elr-container{
+                position: absolute;
+            }
+            #elr-container #cur-level{
+                float: right;
+                padding: 5px;
+            }
+            #elr-container #background-level{
+                float: right;
+                padding: 5px;
+            }
             #map-info-container #annotation ul{
                 padding: 10px;
                 list-style-type: none;
@@ -122,12 +133,22 @@
                 tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-past_id/1.0.0/radiation/{z}/{x}/{y}.png"],
                 grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-past_id/1.0.0/radiation/{z}/{x}/{y}.grid.json']
             };
-            var template = null;
+            var poiTemplate = null;
+            var elrTemplate = null;
+            var printElevatedLocation = function(obj){
+                $("#annotation").show();
+                var variables = {};
+                variables['multiplier'] = 3;
+                variables['cur'] = obj.properties['ra226-level'];
+                variables['bg'] = obj.properties['background'];
+                $("#annotation").html(elrTemplate(variables));
+                $("#annotation ul").effect('highlight', {}, 100);
+            };
             var printAnnotation = function(obj){
                 $("#annotation").show();
                 var variables = obj.textSegments;
                 variables['name'] = obj.name
-                $($("#annotation")[0]).html(template(variables));
+                $($("#annotation")[0]).html(poiTemplate(variables));
                 $($("#annotation ul")[0]).effect('highlight', {}, 100);
             };
             var hoverCallback = function(data){
@@ -142,7 +163,8 @@
                 northEast = new L.LatLng(37.87675039049737,-122.29156494140625),
                 bounds = new L.LatLngBounds(southWest, northEast);
 
-                template = _.template($("#poi-print-template").html());
+                poiTemplate = _.template($("#poi-print-template").html());
+                elrTemplate = _.template($("#elr-print-template").html());
                 var poi = [];
                 var LeafIcon = L.Icon.extend({
                         iconUrl: 'marker-radioactive.png',
@@ -167,7 +189,6 @@
                 map.setView(center, 15);
 
                var plotElevatedRadiation = function(){
-                    var dotz = [];
                     var minSize = _.min(elevatedLevels, function(obj){
                         return obj.properties['ra226-level'];
                     });
@@ -187,31 +208,47 @@
                     };
 
                     _.each(elevatedLevels, function(obj){
-                        var geojsonLayer = new L.GeoJSON(obj, {
-                            pointToLayer: function(latlng){
-                                markerOptions['radius'] = scale(obj.properties['ra226-level']);
-                                return new L.CircleMarker(latlng, markerOptions);
-                            }
-                        });
-                        map.addLayer(geojsonLayer);
-                        geojsonLayer.on('click', function(e){
-                            printElevatedLocation(obj);
-                        });
-                        dotz.push(geojsonLayer);
+                        if(obj.marker === undefined){
+                            var geojsonLayer = new L.GeoJSON(obj, {
+                                pointToLayer: function(latlng){
+                                    markerOptions['radius'] = scale(obj.properties['ra226-level']);
+                                    return new L.CircleMarker(latlng, markerOptions);
+                                }
+                            });
+                            map.addLayer(geojsonLayer);
+                            geojsonLayer.on('click', function(e){
+                                printElevatedLocation(obj);
+                            });
+                            obj.marker = geojsonLayer;
+                        } else {
+                            map.removeLayer(obj.marker);
+                            obj.marker = undefined;
+                        }
                     });
                 };
-                var toPlot = _.filter(annotations, function(obj){
-                    return obj.type == 'point';
-                });
                 var plotPOI = function(){
+                    var toPlot = _.filter(annotations, function(obj){
+                        return obj.type == 'point';
+                    });
                     _.each(toPlot, function(obj){
-                        var point = new L.LatLng(obj.latlng[0], obj.latlng[1]);
-                        var marker = new L.Marker(point, {icon: radIcon});
-                        marker.on('click', function(e){
-                            printAnnotation(obj);
-                        });
-                        obj.marker = marker;
-                        map.addLayer(marker);
+                        if(obj.marker === undefined){
+                            var point = new L.LatLng(obj.latlng[0], obj.latlng[1]);
+                            var marker = new L.Marker(point, {icon: radIcon});
+                            marker.on('click', function(e){
+                                printAnnotation(obj);
+                            });
+                            obj.marker = marker;
+                            map.addLayer(marker);
+                        } else { 
+                            if(obj.marker.hidden == true){
+                                $($(obj.marker._icon)[0]).show();
+                                $($(obj.marker._shadow)[0]).show();
+                            } else{
+                                $($(obj.marker._icon)[0]).hide();
+                                $($(obj.marker._shadow)[0]).hide();
+                            }
+                            obj.marker.hidden = !obj.marker.hidden;
+                        }
                     });
                 };
 
@@ -222,17 +259,10 @@
                     var target = e.srcElement || e.target;
                     var id = $(target).attr('id');
                     if(id == 'poi'){
-                        _.each(toPlot, function(obj){
-                            if(obj.marker.hidden == true){
-                                $($(obj.marker._icon)[0]).show();
-                                $($(obj.marker._shadow)[0]).show();
-                            } else{
-                                $($(obj.marker._icon)[0]).hide();
-                                $($(obj.marker._shadow)[0]).hide();
-                            }
-                            obj.marker.hidden = !obj.marker.hidden;
-                        });
-                    } else{
+                        plotPOI();
+                    }else if(id === 'elr'){
+                        plotElevatedRadiation();
+                    }else{
                         var obj = LayerInteraction.objects[id];
                         if(obj.hidden){
                             obj.setHidden();
@@ -266,6 +296,7 @@
                 <a href="#" id="poi" class="visible-layer">Points of Interest</a> |
                 <a href="#" id="ir" class="visible-layer"> Installation Restoration Sites</a> |
                 <a href="#" id="newId" class="visible-layer">Newly Identified Sites</a> |
+                <a href="#" id="elr" class="visible-layer">Elevated Radiation Locations</a> |
                 <a href="#" id="pastId" class="visible-layer">Previously Identified Sites</a>
             </div>
             <div id="annotation"></div>
@@ -280,6 +311,17 @@
                 <li class="annotation-item"><span>What happened:</span> <%= cause %></li>
                 <li class="annotation-item"><span>Potential contaminents:</span> <%= potentialContaminents %></li>
                 <li class="annotation-item"><span>Recommended steps:</span> <%= recommendedSteps %></li>
+            </ul>
+        </script>
+        <script type="text/template" id="elr-print-template">
+            <ul>
+                <li>blahhhhh <%= multiplier %> x the background radiation</li>
+                <li>
+                    <div id="elr-container">
+                        <div id="cur-level"><%= cur %></div>
+                        <div id="background-level"><%= bg %></div>
+                    </div>
+                </li>
             </ul>
         </script>
     </body>
