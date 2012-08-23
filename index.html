@@ -244,7 +244,7 @@
                         if(obj.marker === undefined){
                             var point = new L.LatLng(obj.latlng[0], obj.latlng[1]);
                             var marker = new L.Marker(point, {icon: radIcon});
-                            marker.on('click', function(e){
+                            marker.on('mouseover', function(e){
                                 printAnnotation(obj);
                             });
                             obj.marker = marker;
@@ -325,13 +325,10 @@
         </script>
         <script type="text/template" id="elr-print-template">
             <ul>
-                <li></li>
-                <li> <%= cur %> / <%= bg %> = <span class="mult"><%= multiplier %></span> times the normal amount of background radiation.
-                    <div id="elr-container">
-                        <div id="cur-level"> VS.</div>
-                        <div id="background-level"></div>
-                    </div>
-                </li>
+                <li> <%= cur %> / <%= bg %> = <span class="mult"><%= multiplier %></span> times the normal amount of background radiation.<li>
+                <li>all values are in terms of counts per second (meaning the number of atoms in a given quantity of radioactive material that are detected by an instrument to have decayed in one second)</li>
+                <li>device was calibrated to detect Radium 226 centered on the 1764.5 KeV energy line.</li>
+                <li>samples collected between 4/5/2011 and 4/7/2011</li>
             </ul>
         </script>
     </body>
