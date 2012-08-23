@@ -73,7 +73,7 @@
                 font-size: 20px;
             }
             #map-info-container #annotation ul{
-                padding: 10px;
+                padding: 0px 10px 10px 10px;
                 list-style-type: none;
                 margin-top: 25px;
                 margin-bottom: 3px;
@@ -116,6 +116,7 @@
         <script type="text/javascript" src="map-legend-view.js"></script>
         <script type="text/javascript" src="d3.ie-min.js"></script>
         <script type="text/javascript" src="elevated_lvls.geojson"></script>
+        <script type="text/javascript" src="unsafe-lvls.geosjon"></script>
         <script type="text/javascript">
             var baseTiles = {
                 tilejson: "1.0.0",
@@ -143,12 +144,26 @@
                 tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-past_id/1.0.0/radiation/{z}/{x}/{y}.png"],
                 grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-past_id/1.0.0/radiation/{z}/{x}/{y}.grid.json']
             };
+            var racTiles = {
+                tilejson: "1.0.0",
+                scheme: "tms",
+                template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
+                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-rac/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-rac/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+            };
             var poiTemplate = null;
             var elrTemplate = null;
+            var unsafeTemplate = null;
+            var printUnsafeLocation = function(obj){
+                $("#annotation").show();
+                var variables = obj.properties;
+                $("#annotation").html(unsafeTemplate(variables));
+                $("#annotation ul").effect('highlight', {}, 100);
+            }
             var printElevatedLocation = function(obj){
                 $("#annotation").show();
                 var variables = {};
-                variables['cur'] = parseFloat(obj.properties['ra226-level']).toFixed(1);
+                variables['cur'] = parseFloat(obj.properties['level']).toFixed(1);
                 variables['bg'] = obj.properties['background'];
                 variables['multiplier'] = (variables.cur / variables.bg).toFixed(1);
                 $("#annotation").html(elrTemplate(variables));
@@ -175,6 +190,7 @@
 
                 poiTemplate = _.template($("#poi-print-template").html());
                 elrTemplate = _.template($("#elr-print-template").html());
+                unsafeTemplate = _.template($("#unsafe-print-template").html());
                 var poi = [];
                 var LeafIcon = L.Icon.extend({
                         iconUrl: 'marker-radioactive.png',
@@ -196,38 +212,48 @@
                 LayerInteraction.objects['ir'] = new LayerInteraction(irTiles, map, 1, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['newId'] = new LayerInteraction(newIdTiles, map, 2, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['pastId'] = new LayerInteraction(pastIdTiles, map, 3, hoverCallback, clickCallback, true);
+                LayerInteraction.objects['rac'] = new LayerInteraction(racTiles, map, 4, hoverCallback, clickCallback, true);
                 map.setView(center, 15);
 
-               var plotElevatedRadiation = function(){
-                    var minSize = _.min(elevatedLevels, function(obj){
-                        return obj.properties['ra226-level'];
-                    });
-                    var maxSize = _.max(elevatedLevels, function(obj){
-                        return obj.properties['ra226-level'];
-                    });
-                    var scale = d3.scale.linear()
-                        .domain([minSize.properties['ra226-level'], maxSize.properties['ra226-level']])
-                        .range([2, 10]); 
+               var plotRadLocations = function(geojsonObjs, fillColor){
                     var markerOptions = {
                         radius: 3,
-                        fillColor: "#ff7800",
+                        fillColor: fillColor,
                         color: "#000",
                         weight: 1,
                         opacity: 1,
                         fillOpacity: 0.8
                     };
+                    var testObj = geojsonObjs[0];
+                    var printFunc = null;
+                    if(testObj.pointType === 'elevated'){
+                        markerOptions.fillColor = "#FF4800";
+                        printFunc = printElevatedLocation;
+                    } else{
+                        markerOptions.fillColor = "#A21F1F";
+                        printFunc = printUnsafeLocation;
+                    }
+                    var minSize = _.min(geojsonObjs, function(obj){
+                        return parseFloat(obj.properties['level']);
+                    });
+                    var maxSize = _.max(geojsonObjs, function(obj){
+                        return parseFloat(obj.properties['level']);
+                    });
+                    var scale = d3.scale.linear()
+                        .domain([parseFloat(minSize.properties['level']), parseFloat(maxSize.properties['level'])])
+                        .range([2, 10]); 
 
-                    _.each(elevatedLevels, function(obj){
+                    _.each(geojsonObjs, function(obj){
                         if(obj.marker === undefined){
                             var geojsonLayer = new L.GeoJSON(obj, {
                                 pointToLayer: function(latlng){
-                                    markerOptions['radius'] = scale(obj.properties['ra226-level']);
+                                    markerOptions['radius'] = scale(obj.properties['level']);
                                     return new L.CircleMarker(latlng, markerOptions);
                                 }
                             });
                             map.addLayer(geojsonLayer);
                             geojsonLayer.on('mouseover', function(e){
-                                printElevatedLocation(obj);
+                                printFunc(obj);
                             });
                             obj.marker = geojsonLayer;
                         } else {
@@ -262,7 +288,8 @@
                     });
                 };
 
-                plotElevatedRadiation();
+                plotRadLocations(elevatedLevels);
+                plotRadLocations(unsafeLevels);
                 plotPOI();
 
                 var layerToggler = function(e){
@@ -271,7 +298,9 @@
                     if(id == 'poi'){
                         plotPOI();
                     }else if(id === 'elr'){
-                        plotElevatedRadiation();
+                        plotRadLocations(elevatedLevels);
+                    }else if(id === 'unsafe'){
+                        plotRadLocations(unsafeLevels);
                     }else{
                         var obj = LayerInteraction.objects[id];
                         if(obj.hidden){
@@ -289,12 +318,16 @@
                 };
                 $("#controls a").unbind('click', layerToggler).bind('click', layerToggler);
                 var values = [
-                    { colorStr: "#9F6", text:"Irradiated sites"},
+                    { colorStr: "#B2DFEE", text:"Installation Restoration sites"},
                     { colorStr: "#ae8", text: "Newly identified impacted sites"},
                     { colorStr: "#FF0000", text: "Previously known impacted sites"},
+                    { colorStr: "#FF4800", text: "Increased radiation levels"},
+                    { colorStr: "#A21F1F", text: "Unsafe radiation levels"},
                     { colorStr: "#FFFF00", text: "Points of Interest"}
                 ];
                 var mlv = new MapLegendView("#legend", values, 'Potentially radioactive Sites on Treasure Island', 'Source: U.S. Navy and Treasure Island Development Authority');
+                var height = $("#controls").outerHeight();
+                $("#annotation").css("top", height + 'px');
             });
         </script>
 
@@ -307,6 +340,7 @@
                 <a href="#" id="ir" class="visible-layer"> Installation Restoration Sites</a> |
                 <a href="#" id="newId" class="visible-layer">Newly Identified Sites</a> |
                 <a href="#" id="elr" class="visible-layer">Elevated Radiation Locations</a> |
+                <a href="#" id="unsafe" class="visible-layer">Unsafe Radiation Locations</a> |
                 <a href="#" id="pastId" class="visible-layer">Previously Identified Sites</a>
             </div>
             <div id="annotation"></div>
@@ -325,10 +359,17 @@
         </script>
         <script type="text/template" id="elr-print-template">
             <ul>
-                <li> <%= cur %> / <%= bg %> = <span class="mult"><%= multiplier %></span> times the normal amount of background radiation.<li>
+                <li > <%= cur %> / <%= bg %> = <span class="mult"><%= multiplier %></span> times the normal amount of background radiation.<li>
                 <li>all values are in terms of counts per second (meaning the number of atoms in a given quantity of radioactive material that are detected by an instrument to have decayed in one second)</li>
                 <li>device was calibrated to detect Radium 226 centered on the 1764.5 KeV energy line.</li>
                 <li>samples collected between 4/5/2011 and 4/7/2011</li>
+            </ul>
+        </script>
+        <script type="text/template" id="unsafe-print-template">
+            <ul>
+                <li class="annotation-item"><span>Percent of annual dose limit</span>: <%= level %>%</li>
+                <li>Level assumes an individual remains at this location 24 hours a day for one year.</li>
+                <li>Safe dose level for an individual is considered to be 100 millirem per year.</li>
             </ul>
         </script>
     </body>
