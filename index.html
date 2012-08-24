@@ -8,7 +8,7 @@
             }
             .leaflet-control-zoom{
                 z-index: 100;
-                top: 45px;
+                top: 69px;
             }
             #map-info-container #map{
                 height: 100%;
@@ -50,7 +50,7 @@
                 width: 35%;
                 right: 0;
                 position: absolute;
-                z-index: 2;
+                z-index: 15;
                 top: 25px;
                 padding: 0 5px 0 5px;
                 background: rgba(255, 255, 255, 0.85);
@@ -105,21 +105,20 @@
             }
         </style>
         
-        <link rel="stylesheet" href="https://raw.github.com/mapbox/wax/master/ext/leaflet.css" />
         <link rel="stylesheet" href="leaflet.0.3.1/leaflet.css" />
         <link rel='stylesheet' href="jquery-ui-1.8.19.custom/css/smoothness/jquery-ui-1.8.19.custom.css"/>
         <script type="text/javascript" src="jquery-ui-1.8.19.custom/js/jquery-1.7.1.min.js"></script>
         <script type="text/javascript" src="jquery-ui-1.8.19.custom/js/jquery-ui-1.8.19.custom.min.js"></script>
         <script type="text/javascript" src="leaflet.0.3.1/leaflet-src.js"></script>
-        <script type="text/javascript" src="https://raw.github.com/mapbox/wax/master/dist/wax.leaf.js"></script>
+        <script type="text/javascript" src="wax.leaf.min.js"></script>
         <script type="text/javascript" src="underscore-min.js"></script>
         <script type="text/javascript" src="raphael-min.js"></script>
         <script type="text/javascript" src="layer-interaction.js"></script>
         <script type="text/javascript" src="annotations.js"></script>
         <script type="text/javascript" src="map-legend-view.js"></script>
         <script type="text/javascript" src="d3.ie-min.js"></script>
-        <script type="text/javascript" src="elevated_lvls.geojson"></script>
-        <script type="text/javascript" src="unsafe-lvls.geosjon"></script>
+        <script type="text/javascript" src="elevated_lvls.js"></script>
+        <script type="text/javascript" src="unsafe-lvls.js"></script>
         <script type="text/javascript">
             var baseTiles = {
                 tilejson: "1.0.0",
@@ -330,6 +329,7 @@
                 var mlv = new MapLegendView("#legend", values, 'Potentially radioactive Sites on Treasure Island', 'Source: U.S. Navy and Treasure Island Development Authority and California Department of Public Health');
                 var height = $("#controls").outerHeight();
                 $("#annotation").css("top", height + 'px');
+                $(".leaflet-control-zoom").css('top', height + 'px');
 
                 var tour = function(e){
                     var target = e.srcElement || e.target;
