@@ -82,6 +82,9 @@
                 padding-top: 2.5px;
                 padding-bottom: 2.5px;
             }
+            #map-info-container #annotation .intro{
+                font-size: 12px;
+            }
             #map-info-container #annotation .annotation-item{
                 font-size: 13px;
             }
@@ -127,8 +130,8 @@
                 tilejson: "1.0.0",
                 scheme: "tms",
                 template: "{{#__location__}}{{/__location__}}{{#__teaser__}}{{{id}}} {{{type}}}{{/__teaser__}}{{#__full__}}{{/__full__}}", 
-                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-ir/1.0.0/radiation/{z}/{x}/{y}.png"],
-                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-ir/1.0.0/radiation/{z}/{x}/{y}.grid.json']
+                tiles: ["http://citizen-tiles.s3.amazonaws.com/ti-radiation-redev/1.0.0/radiation/{z}/{x}/{y}.png"],
+                grids: ['http://citizen-tiles.s3.amazonaws.com/ti-radiation-redev/1.0.0/radiation/{z}/{x}/{y}.grid.json']
             };
             var newIdTiles = {
                 tilejson: "1.0.0",
@@ -183,7 +186,6 @@
 
             };
             $(document).ready(function(){
-                $("#annotation").hide();
                 var southWest = new L.LatLng(37.78211205989559,-122.4105262756347),
                 northEast = new L.LatLng(37.87675039049737,-122.29156494140625),
                 bounds = new L.LatLngBounds(southWest, northEast);
@@ -209,13 +211,13 @@
                 })
                 var center = new L.LatLng(37.82337871943924,-122.3697566986084 );
                 var base = new LayerInteraction(baseTiles, map, 0, undefined, undefined, true);
-                LayerInteraction.objects['ir'] = new LayerInteraction(irTiles, map, 1, hoverCallback, clickCallback, true);
+                LayerInteraction.objects['redev'] = new LayerInteraction(irTiles, map, 1, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['newId'] = new LayerInteraction(newIdTiles, map, 2, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['pastId'] = new LayerInteraction(pastIdTiles, map, 3, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['rac'] = new LayerInteraction(racTiles, map, 4, hoverCallback, clickCallback, true);
                 map.setView(center, 15);
 
-               var plotRadLocations = function(geojsonObjs, fillColor){
+                var plotRadLocations = function(geojsonObjs, fillColor){
                     var markerOptions = {
                         radius: 3,
                         fillColor: fillColor,
@@ -318,16 +320,45 @@
                 };
                 $("#controls a").unbind('click', layerToggler).bind('click', layerToggler);
                 var values = [
-                    { colorStr: "#B2DFEE", text:"Installation Restoration sites"},
+                    { colorStr: "#B2DFEE", text:"Redevelopment sites"},
                     { colorStr: "#ae8", text: "Newly identified impacted sites"},
                     { colorStr: "#FF0000", text: "Previously known impacted sites"},
                     { colorStr: "#FF4800", text: "Increased radiation levels"},
                     { colorStr: "#A21F1F", text: "Unsafe radiation levels"},
                     { colorStr: "#FFFF00", text: "Points of Interest"}
                 ];
-                var mlv = new MapLegendView("#legend", values, 'Potentially radioactive Sites on Treasure Island', 'Source: U.S. Navy and Treasure Island Development Authority');
+                var mlv = new MapLegendView("#legend", values, 'Potentially radioactive Sites on Treasure Island', 'Source: U.S. Navy and Treasure Island Development Authority and California Department of Public Health');
                 var height = $("#controls").outerHeight();
                 $("#annotation").css("top", height + 'px');
+
+                var tour = function(e){
+                    var target = e.srcElement || e.target;
+                    var id = $(target).attr('id');
+                    if(id === 'proceed-0'){
+                        $(".clicker").click();
+                        $("#pastId").click();
+                        $("#redev").click();
+                        $($(".intro")[0]).hide();
+                        $($(".intro")[1]).show();
+                    } else if(id === 'proceed-1'){
+                        $("#elr").click();
+                        $("#unsafe").click();
+                        $($(".intro")[1]).hide();
+                        $($(".intro")[2]).show();
+                    } else if(id === 'proceed-2'){
+                        $("#newId").click();
+                        $("#poi").click();
+                        $($(".intro")[2]).hide();
+                        $($(".intro")[3]).show();
+                    } else if(id === 'proceed-begin'){
+                        $(target).parent().hide();
+                        $($(".intro")[0]).show();
+                    }
+                }
+
+                var content = $("#intro-template").html();
+                $("#annotation").html(content);
+                $(".proceed").unbind('click', tour).bind('click', tour);
             });
         </script>
 
@@ -336,12 +367,12 @@
         <div id="map-info-container">
             <div id="controls">
                 <span>Showing: </span>
-                <a href="#" id="poi" class="visible-layer">Points of Interest</a> |
-                <a href="#" id="ir" class="visible-layer"> Installation Restoration Sites</a> |
-                <a href="#" id="newId" class="visible-layer">Newly Identified Sites</a> |
-                <a href="#" id="elr" class="visible-layer">Elevated Radiation Locations</a> |
-                <a href="#" id="unsafe" class="visible-layer">Unsafe Radiation Locations</a> |
-                <a href="#" id="pastId" class="visible-layer">Previously Identified Sites</a>
+                <a href="#" id="poi" class="visible-layer clicker">Points of Interest</a> |
+                <a href="#" id="redev" class="visible-layer  clicker"> Redevelopment Sites</a> |
+                <a href="#" id="pastId" class="visible-layer  clicker">Previously Identified Sites</a> |
+                <a href="#" id="newId" class="visible-layer  clicker">Newly Identified Sites</a> |
+                <a href="#" id="elr" class="visible-layer clicker">Elevated Radiation Locations</a> |
+                <a href="#" id="unsafe" class="visible-layer  clicker">Unsafe Radiation Locations</a>
             </div>
             <div id="annotation"></div>
             <div id="map"></div>
@@ -371,6 +402,34 @@
                 <li>Level assumes an individual remains at this location 24 hours a day for one year.</li>
                 <li>Safe dose level for an individual is considered to be 100 millirem per year.</li>
             </ul>
+        </script>
+        <script type="text/template" id="intro-template">
+            <ul>
+                <li class="intro">
+                Use this map to explore Treasure Island's known radioactive locations, potentially irradiated sites The Navy recently disclosed and where San Francisco plans to develop high-rises big enough to hold 20,000 people.
+                <br/><br/>
+                At the top of the page there are six buttons. Each button turns on or off a layer. For example, If you don't want to see the plans for new housing units, click 'Redevelopment Sites' to hide it. As you hover over the circles or radioactive markers, this window will update with facts about that site. Or, <a href="#" id="proceed-0" class="proceed">start the tour for more background</a>.
+                </li>
+                <li class="intro" style="display:none;">
+                With plans to redevelop Treasure Island by adding new high-rises - enough for 20,000 people - The Navy began turning over parcels of land used to decontaminate potentially radioactive ships to the City of San Francisco. Originally, The Navy identified one site at the corner of Avenue M and Fifth Street as contaminated.
+                <br/><br/>
+                <a href="#" id='proceed-begin' class="proceed">Start over</a> / <a href="#" id="proceed-1" class="proceed">Next</a> 
+                </li>
+                <li class="intro" style="display:none;">
+                The California Department of Public Health surveyed the north eastern section of the island in April 2011 for radiation. They found 89 locations where the radiation was double normal exposure rates. 
+                <br/><br/>They identified four locations where, if you sat there for one year, you would exposed to what California defines for civilians as unsafe levels of radiation: more than 100 millirems per year. 
+
+                <br/><br/>For example, the average person living in or around San Francisco is exposed to 44 millirems of radiation per year, according to a report from the Lawrence Livermore National Laboratory. Your home, by contrast, emits 200 millrems of radiation annually, according to the Environmental Protection Agency. 
+                <br/><br/>At these four locations, you could be exposed up to 4380000 millirems of radiation if you spent all year there.
+                <br/><br/>
+                <a href="#" id='proceed-begin' class="proceed">Start over</a> / <a href="#" id="proceed-2" class="proceed">Next</a> 
+                </li>
+                <li class="intro" style="display:none;">
+                At the California Department of Public Health's insistence The Navy conducted a second, more detailed survey after it was determined the orignal reports failed to capture the scope and the potential spread of contamination. 
+                <br/><br/>In it, several new sites were identified as potentially radiated based a site's history. Without further testing, it's not known whether these sites - one that now has a day care and elementary school on its premise - are dangerously radioactive.
+                <br/><br/>
+                <a href="#" id='proceed-begin' class="proceed">Start over</a>
+                </li>
         </script>
     </body>
 </html>
