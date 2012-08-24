@@ -361,10 +361,10 @@
                 $("#controls a").unbind('click', layerToggler).bind('click', layerToggler);
                 var values = [
                     { colorStr: "#B2DFEE", text:"Future development"},
-                    { colorStr: "#ae8", text: "Newly identified impacted sites"},
-                    { colorStr: "#FF0000", text: "Previously known impacted sites"},
-                    { colorStr: "#FF4800", text: "Increased radiation levels"},
-                    { colorStr: "#A21F1F", text: "Unsafe radiation levels"},
+                    { colorStr: "#ae8", text: "Newly identified sites"},
+                    { colorStr: "#FF0000", text: "Previously identified sites"},
+                    { colorStr: "#FF4800", text: "Elevated radiation locations"},
+                    { colorStr: "#A21F1F", text: "Unsafe radiation locations"},
                     { colorStr: "#FFFF00", text: "Points of Interest"}
                 ];
                 var mlv = new MapLegendView("#legend", values, 'Potentially radioactive sites on Treasure Island', 'Source: U.S. Navy and Treasure Island Development Authority and California Department of Public Health');
