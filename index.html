@@ -199,7 +199,13 @@
                 var target = e.srcElement || e.target;
                 var id = $(target).attr('id');
                 if(id === 'proceed-0'){
-                    $(".clicker").click();
+                    var links = $(".clicker");
+                    _.each(links, function(link){
+                        var txtStyle = $(link).css('text-decoration');
+                        if(txtStyle == 'none'){
+                            $(link).click();
+                        }//else do nothing
+                    });
                     $("#pastId").click();
                     $("#redev").click();
                     $($(".intro")[0]).hide();
