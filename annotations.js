@@ -169,19 +169,6 @@ var annotations = [
     },
     {
         'type': 'point',
-        'latlng': [37.830870026795985,-122.37596869468689],
-        'id': '1207',
-        'name': 'Salvage Waste Disposal Area 1231/1233, 1207/1209, A& B, Area 7 and Area 8',
-        'textSegments': {
-            'currently': 'Screening soils for contaminates. Future work: Cleanup of soil, follow-up testing to confirm by 2014.',
-            'cause': 'Waste disposal. Past studies found elevated Ra-226.',
-            'recommendedSteps': 'NA',
-            'potentialContaminents': 'Ra-226',
-            'contaminationLikelihood': 'NA',
-        }
-    },
-    {
-        'type': 'point',
         'latlng': [37.831980099271526,-122.37327575683594],
         'id': '1231',
         'name': 'Salvage Waste Disposal Area 1231/1233, 1207/1209, A& B, Area 7 and Area 8',
