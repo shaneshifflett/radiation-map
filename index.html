@@ -241,6 +241,10 @@
             var hoverCallback = function(data){
 
             };
+            var racHoverCallback = function(data){
+                $($("#annotation")[0]).html('Fenced off radioactive residential area');
+                $($("#annotation ul")[0]).effect('highlight', {}, 100);
+            };
             var clickCallback = function(data){
 
             };
@@ -384,9 +388,9 @@
                     { colorStr: "#FF0000", text: "Previously identified sites"},
                     { colorStr: "#FF4800", text: "Elevated radiation locations"},
                     { colorStr: "#A21F1F", text: "Unsafe radiation locations"},
-                    { colorStr: "#FFFF00", text: "Points of Interest"}
+                    { colorStr: "#FFFF00", text: "Points of interest"}
                 ];
-                var mlv = new MapLegendView("#legend", values, 'Potentially radioactive sites on Treasure Island', 'Source: U.S. Navy and Treasure Island Development Authority and California Department of Public Health');
+                var mlv = new MapLegendView("#legend", values, 'Potentially radioactive sites on Treasure Island', 'Source: U.S. Navy, Treasure Island Development Authority and California Department of Public Health');
                 var height = $("#controls").outerHeight();
                 $("#annotation").css("top", height + 'px');
                 $(".leaflet-control-zoom").css('top', height + 'px');
@@ -459,33 +463,33 @@
             <ul class='unsafe-annotations'>
                 <li><span style="font-size:2em;"><%= level %>%</span><span style="font-size:12px;font-style:italic;">Percent of radiation above annual dose limit</span></li>
                 <li class="citation">Level assumes an individual remains at this location 24 hours a day for one year.</li>
-                <li class="citation">The State of California considers a safe dose level for an individual to be 100 millirem per year.</li>
+                <li class="citation">The state of California considers a safe dose level for an individual to be 100 millirem per year.</li>
                 <li class="citation">Source: California Department of Public Health</li>
                 <li class="restart"><a href="#" id="show-definitions" class="restarters">Types of radiation explained</a> <a href="#" id="restart" class="restarters">Instructions</a></li>
             </ul>
         </script>
         <script type="text/template" id="rad-def-template">
             <ul>
-                <li class="annotation-item"><span>Radium-226</span> is often created during nuclear fission when Uranium-238 decays. In the early part of the century, it was used glow-in-the-dark paints and luminescent gauges during World War II. On Treasure Island, ship repair and salvage yards, as well as an optical shop, are the main sources of exposure. It can be ingested or inhaled, and accumulates in the bones. Though naturally present in the environment, long-term high exposure can lead to blood, lymph, and bone cancers. It takes about 1600 years for Radium-226 to decay into Radon, which is chemically stable.</li>
-                <li class="annotation-item">Cesium-137</span> is most often produced as a byproduct of nuclear fission in reactors and weapons. It has a half-life of about 30 years. Ships undergoing atomic bomb tests in the 50’s may have absorbed the radioactive isotope.  It can be ingested or inhaled and is now present at low concentrations throughout the world. Long-term exposure increases cancer risk and high levels can lead to burns and death. On Treasure Island, sealed Cs-137 sources were used to simulate nuclear fallout.</li>
+                <li class="annotation-item"><span>Radium-226</span> is often created during nuclear fission when Uranium-238 decays. In the early part of the century, it was used in glow-in-the-dark paints and luminescent gauges during World War II. On Treasure Island, ship repair and salvage yards, as well as an optical shop, are the main sources of exposure. It can be ingested or inhaled and accumulates in the bones. Though naturally present in the environment, long-term high exposure can lead to blood, lymph and bone cancers. It takes about 1,600 years for radium-226 to decay into Radon, which is chemically stable.</li>
+                <li class="annotation-item">Cesium-137</span> is most often produced as a byproduct of nuclear fission in reactors and weapons. It has a half-life of about 30 years. Ships undergoing atomic bomb tests in the 1950s may have absorbed the radioactive isotope.  It can be ingested or inhaled and is now present at low concentrations throughout the world. Long-term exposure increases cancer risk, and high levels can lead to burns and death. On Treasure Island, sealed cesium-137 sources were used to simulate nuclear fallout.</li>
                 <li><a href="#" id="restart" class="restarters">Instructions</a></li>
             </ul>
         </script>
         <script type="text/template" id="intro-template">
             <ul>
                 <li class="intro">
-                Use this map to explore Treasure Island's known radioactive locations, potentially irradiated sites The Navy recently disclosed and where San Francisco plans to develop high-rises big enough to hold 20,000 people.
+                Use this map to explore Treasure Island's known radioactive locations, potentially irradiated sites that the Navy recently disclosed and sites where San Francisco plans to develop high-rises big enough to hold 20,000 people.
                 <br/><br/>
-                At the top of the page there are six buttons. Each button turns on or off a layer. For example, If you don't want to see the plans for new housing units, click 'Redevelopment Sites' to hide it. As you hover over the circles or radioactive markers, this window will update with facts about that site. Or, <a href="#" id="proceed-0" class="proceed">start the tour for more background</a>.
+                At the top of the page there are six buttons. Each button turns on or off a layer. For example, if you don't want to see the plans for new housing units, click Redevelopment Sites to hide it. As you hover over the circles or radioactive markers, this window will update with facts about that site. Or, <a href="#" id="proceed-0" class="proceed">start the tour for more background</a>.
                 </li>
                 <li class="intro" style="display:none;">
-                With plans to redevelop Treasure Island by adding new high-rises - enough for 20,000 people - The Navy will turn over parcels of land used to decontaminate potentially radioactive ships to the City of San Francisco. Originally, The Navy identified one site at the corner of Avenue M and Fifth Street as contaminated.
+                With plans to redevelop Treasure Island by adding new high-rises -- enough for 20,000 people -- The Navy will turn over parcels of land used to decontaminate potentially radioactive ships to the City of San Francisco. Originally, The Navy identified one site at the corner of Avenue M and Fifth Street as contaminated.
                 <br/><br/>
                 <a href="#" id='proceed-begin' class="proceed">Start over</a> / <a href="#" id="proceed-1" class="proceed">Next</a> 
                 </li>
                 <li class="intro" style="display:none;">
-                The California Department of Public Health surveyed the north eastern section of the island in April 2011 for radiation. They found 89 locations where the radiation was double normal exposure rates. 
-                <br/><br/>They identified four locations where, if you sat there for one year, you would exposed to what California defines for civilians as unsafe levels of radiation: more than 100 millirems per year. 
+                The California Department of Public Health surveyed the northeastern section of the island in April 2011 for radiation. They found 89 locations where the radiation was double normal exposure rates. 
+                <br/><br/>It identified four locations where, if you sat there for one year, you would be exposed to what California defines for civilians as unsafe levels of radiation: more than 100 millirems per year. 
 
                 <br/><br/>For example, someone living in or around San Francisco is exposed to 44 millirems of radiation per year on average, according to a report from the Lawrence Livermore National Laboratory. Your home, by contrast, emits 200 millrems of radiation annually on average, according to the Environmental Protection Agency. 
                 <br/><br/>At one of these four locations, you could be exposed to as much as 4,380,000 millirems of radiation if you spent all year there.
@@ -493,8 +497,8 @@
                 <a href="#" id='proceed-begin' class="proceed">Start over</a> / <a href="#" id="proceed-2" class="proceed">Next</a> 
                 </li>
                 <li class="intro" style="display:none;">
-                At the California Department of Public Health's insistence The Navy conducted a second, more detailed survey after it was determined the orignal reports failed to capture the scope of the potential contamination. 
-                <br/><br/>In it, several new sites were identified as potentially radiated based a site's history. Without further testing, it's not known whether these sites - one that now has a day care and elementary school on its premise - are dangerously radioactive.
+                At the California Department of Public Health's insistence The Navy conducted a second, more detailed survey after it was determined the original reports failed to capture the scope of the potential contamination. 
+                <br/><br/>In it, several new sites were identified as potentially radiated based on the site's history. Without further testing, it's not known whether these sites -- one that now has a day care and elementary school on its premise -- are dangerously radioactive.
                 <br/><br/>
                 <a href="#" id='proceed-begin' class="proceed">Start over</a>
                 </li>
