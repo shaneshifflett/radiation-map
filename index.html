@@ -431,19 +431,19 @@
         <script type="text/template" id="elr-print-template">
             <ul class='elr-annotations'>
                 <li>
-                    <div style="text-align:center;">
+                    <div style="text-align:center;width:250px;margin:0 auto;">
                         <div style="font-size:10px;">
                             The radiation at this location is
                         </div>
                         <div style="font-size:2.75em">
-                            <%= multiplier %>
+                            <%= multiplier %><span style="font-size:75%;">x</span>
                         </div>
-                        <div style="font-size:10px;">
-                            times the normal amount of background radiation.                    
+                        <div style="font-size:10px;margin-bottom:5px;">
+                            the normal amount of background radiation.                    
                         </div>
-                        <div style="font-size:2em;height:60px;border-top-style:dotted;">
+                        <div style="font-size:2em;height:60px;border-top:2px dotted #999;">
                             <div style="margin-left:24%;">
-                                <div style="float:left;padding:5px;border-right-style:dotted;"><span style="font-size:10px;display:block;">reading</span><%= cur %></div><div style="float:left;padding:5px;"><span style="font-size:10px;display:block;">background</span><%= bg %></div>
+                                <div style="float:left;padding:5px;border-right:2px dotted #999;"><span style="font-size:10px;display:block;">reading</span><%= cur %></div><div style="float:left;padding:5px;"><span style="font-size:10px;display:block;">background</span><%= bg %></div>
                             </div>
                         </div>
                     </div>
