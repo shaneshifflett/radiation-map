@@ -207,6 +207,7 @@
                     $("#annotation").html(content);
                     $(".proceed").unbind('click', tour).bind('click', tour);
                 }
+                return false;
             };
             var tour = function(e){
                 var target = e.srcElement || e.target;
@@ -237,16 +238,18 @@
                     $(target).parent().hide();
                     $($(".intro")[0]).show();
                 }
+                return false;
             };
             var hoverCallback = function(data){
-
+                return false;
             };
             var racHoverCallback = function(data){
                 $($("#annotation")[0]).html('Fenced off radioactive residential area');
                 $($("#annotation ul")[0]).effect('highlight', {}, 100);
+                return false;
             };
             var clickCallback = function(data){
-
+                return false;
             };
             $(document).ready(function(){
                 var southWest = new L.LatLng(37.78211205989559,-122.4105262756347),
@@ -377,6 +380,7 @@
                     } else {
                         $(target).css('text-decoration', 'line-through');
                     }
+                    return false;
                 };
                 $("#controls a").unbind('click', layerToggler).bind('click', layerToggler);
                 var values = [
