@@ -176,7 +176,7 @@
                 $("#annotation ul").effect('highlight', {}, 100);
                 $(".restarters").unbind('click', restart).bind('click', restart);
 
-            }
+            };
             var printElevatedLocation = function(obj){
                 $("#annotation").show();
                 var variables = {};
@@ -190,7 +190,7 @@
             var printAnnotation = function(obj){
                 $("#annotation").show();
                 var variables = obj.textSegments;
-                variables['name'] = obj.name
+                variables['name'] = obj.name;
                 $($("#annotation")[0]).html(poiTemplate(variables));
                 $($("#annotation ul")[0]).effect('highlight', {}, 100);
                 $(".restarters").unbind('click', restart).bind('click', restart);
@@ -215,7 +215,7 @@
                     var links = $(".clicker");
                     _.each(links, function(link){
                         var txtStyle = $(link).css('text-decoration');
-                        if(txtStyle == 'none'){
+                        if(txtStyle === 'none'){
                             $(link).click();
                         }//else do nothing
                     });
@@ -258,7 +258,7 @@
                 unsafeTemplate = _.template($("#unsafe-print-template").html());
                 var poi = [];
                 var LeafIcon = L.Icon.extend({
-                        iconUrl: 'marker-radioactive.png',
+                        iconUrl: 'marker-radioactive.png'
                     });
                 var radIcon = new LeafIcon();
                 $("#map-info-container").css("height", $(document).height() + 'px');
@@ -269,15 +269,12 @@
                     minZoom:13, maxZoom: 18, attributionControl: false,
                     maxBounds: bounds
                 });
-                map.on('click', function(e){
-                    console.log(e.latlng.lat + ',' + e.latlng.lng);
-                })
                 var center = new L.LatLng(37.82337871943924,-122.3697566986084 );
                 var base = new LayerInteraction(baseTiles, map, 0, undefined, undefined, true);
                 LayerInteraction.objects['redev'] = new LayerInteraction(irTiles, map, 1, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['newId'] = new LayerInteraction(newIdTiles, map, 2, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['pastId'] = new LayerInteraction(pastIdTiles, map, 3, hoverCallback, clickCallback, true);
-                LayerInteraction.objects['rac'] = new LayerInteraction(racTiles, map, 4, hoverCallback, clickCallback, true);
+                LayerInteraction.objects['rac'] = new LayerInteraction(racTiles, map, 4, racHoverCallback, clickCallback, true);
                 map.setView(center, 15);
 
                 var plotRadLocations = function(geojsonObjs, fillColor){
@@ -329,7 +326,7 @@
                 };
                 var plotPOI = function(){
                     var toPlot = _.filter(annotations, function(obj){
-                        return obj.type == 'point';
+                        return obj.type === 'point';
                     });
                     _.each(toPlot, function(obj){
                         if(obj.marker === undefined){
@@ -341,7 +338,7 @@
                             obj.marker = marker;
                             map.addLayer(marker);
                         } else { 
-                            if(obj.marker.hidden == true){
+                            if(obj.marker.hidden === true){
                                 $($(obj.marker._icon)[0]).show();
                                 $($(obj.marker._shadow)[0]).show();
                             } else{
@@ -360,7 +357,7 @@
                 var layerToggler = function(e){
                     var target = e.srcElement || e.target;
                     var id = $(target).attr('id');
-                    if(id == 'poi'){
+                    if(id === 'poi'){
                         plotPOI();
                     }else if(id === 'elr'){
                         plotRadLocations(elevatedLevels);
@@ -384,7 +381,7 @@
                 $("#controls a").unbind('click', layerToggler).bind('click', layerToggler);
                 var values = [
                     { colorStr: "#B2DFEE", text:"Future development"},
-                    { colorStr: "#ae8", text: "Newly identified sites"},
+                    { colorStr: "#FFFF00", text: "Newly identified sites"},
                     { colorStr: "#FF0000", text: "Previously identified sites"},
                     { colorStr: "#FF4800", text: "Elevated radiation locations"},
                     { colorStr: "#A21F1F", text: "Unsafe radiation locations"},
@@ -394,10 +391,6 @@
                 var height = $("#controls").outerHeight();
                 $("#annotation").css("top", height + 'px');
                 $(".leaflet-control-zoom").css('top', height + 'px');
-
-                
-
- 
                 var content = $("#intro-template").html();
                 $("#annotation").html(content);
                 $(".proceed").unbind('click', tour).bind('click', tour);

@@ -22,7 +22,7 @@ var annotations = [
             'cause': 'Contaminated soil from Site 12 placed in the yard surrounding the building.',
             'potentialContaminents': 'Radium-226',
             'recommendedSteps': 'Do a survey of structures and yard.',
-            'contaminationLikelihood': 'Unlikely', 
+            'contaminationLikelihood': 'Unlikely'
         }
     },
     {
@@ -35,7 +35,7 @@ var annotations = [
             'cause': 'Unlicensed radioactive sources used to check instruments; procedures for disposal of radioactive sources may not have been followed. Radioactive decontamination training performed here.',
             'potentialContaminents': 'Radium-226, cesium-137',
             'recommendedSteps': 'A scoping survey of the concrete holding tanks, structures and ground surface in the former training area.',
-            'contaminationLikelihood': 'Unlikely', 
+            'contaminationLikelihood': 'Unlikely'
         }
     },
     {
@@ -48,7 +48,7 @@ var annotations = [
             'cause': 'Salvage yards handle industrial debris, which are often radiologically contaminated.',
             'potentialContaminents': 'Radium-226',
             'recommendedSteps': 'Complete scoping survey of ground surface in sewage treatment plant',
-            'contaminationLikelihood': 'Unlikely', 
+            'contaminationLikelihood': 'Unlikely'
         }
     },
     {
@@ -61,7 +61,7 @@ var annotations = [
             'cause': 'Contaminated soil associated with Site 12 was moved here and repacked for shipment.',
             'potentialContaminents': 'Radium-226',
             'recommendedSteps': 'Complete survey of the ground surface in the site.',
-            'contaminationLikelihood': 'Unlikely', 
+            'contaminationLikelihood': 'Unlikely'
         }
     },
     {
@@ -74,7 +74,7 @@ var annotations = [
             'cause': 'Radiological handling in the salvage and waste disposal area.  Nuclear, Biological, and Chemical Warfare School may have conducted unlicensed checks of radioactive sources or failed to comply with procedures.',
             'potentialContaminents': 'Radium-226 and cesium-137',
             'recommendedSteps': 'Complete scoping survey of former holding tanks, structures and ground surface at site. Gamma ray walkover survey of roads not previously tested.',
-            'contaminationLikelihood': 'Unlikely', 
+            'contaminationLikelihood': 'Unlikely'
         }
     },
     {
@@ -87,7 +87,7 @@ var annotations = [
             'cause': 'Salvage yards that handle industrial debris tend to be radiologically contaminated. Higher levels of radium-226 detected during excavation, possibly from a deteriorated metal gauge.',
             'potentialContaminents': 'Radium-226',
             'recommendedSteps': 'Soil remediation done in 2010.  Phase II remediation for Site 31 ongoing. Survey after remediation.',
-            'contaminationLikelihood': 'Likely', 
+            'contaminationLikelihood': 'Likely'
         }
     },
     {
@@ -100,7 +100,7 @@ var annotations = [
             'cause': 'Housed the Radiation Detection, Indication And Computation Maintenance school, where instrument calibration and instruction required periodic leaking of radioactive materials, and counting room for testing contamination.',
             'potentialContaminents': 'Radium-226, Cesium-137',
             'recommendedSteps': 'Scope and survey of structure and sanitary sewer line.',
-            'contaminationLikelihood': 'Unlikely', 
+            'contaminationLikelihood': 'Unlikely'
         }
     },
     {
@@ -113,7 +113,7 @@ var annotations = [
             'cause': '1962-1968 salvage yard. Separately listed as a hazardous waste area by 1996.',
             'potentialContaminents': 'Radium-226',
             'recommendedSteps': 'Scoping survey of the ground surface',
-            'contaminationLikelihood': 'Unlikely', 
+            'contaminationLikelihood': 'Unlikely'
         }
     },
     {
@@ -138,7 +138,7 @@ var annotations = [
             'cause': '1950 Radium sulfate spill was cleaned up at the time, but a 2007 survey found piping could be impacted.',
             'recommendedSteps': 'Surveys to make sure cleanup meets current standards, remediation of sewer system and surrounding areas.',
             'potentialContaminents': 'Radium-226',
-            'contaminationLikelihood': 'NA',
+            'contaminationLikelihood': 'NA'
         }
     },
     {
@@ -151,7 +151,7 @@ var annotations = [
             'cause': "Two alpha radiation sources discovered and decontaminated in the 1970s. A 1988 investigation found it incomplete.",
             'recommendedSteps': 'NA',
             'potentialContaminents': 'NA',
-            'contaminationLikelihood': 'NA',
+            'contaminationLikelihood': 'NA'
         }
     }
 ];
