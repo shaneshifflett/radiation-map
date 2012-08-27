@@ -82,6 +82,9 @@
                 font-style: italic;
                 font-size: 10px;
             }
+            #annotation a{
+                font-size: 12px;
+            }
             #map-info-container #annotation ul{
                 padding: 0px 10px 10px 10px;
                 list-style-type: none;
@@ -454,9 +457,9 @@
         </script>
         <script type="text/template" id="unsafe-print-template">
             <ul class='unsafe-annotations'>
-                <li class="annotation-item"><span>Percent of radiation above annual dose limit</span>: <%= level %>%</li>
-                <li>Level assumes an individual remains at this location 24 hours a day for one year.</li>
-                <li>The State of California considers a safe dose level for an individual to be 100 millirem per year.</li>
+                <li><span style="font-size:2em;"><%= level %>%</span><span style="font-size:12px;font-style:italic;">Percent of radiation above annual dose limit</span></li>
+                <li class="citation">Level assumes an individual remains at this location 24 hours a day for one year.</li>
+                <li class="citation">The State of California considers a safe dose level for an individual to be 100 millirem per year.</li>
                 <li class="citation">Source: California Department of Public Health</li>
                 <li class="restart"><a href="#" id="show-definitions" class="restarters">Types of radiation explained</a> <a href="#" id="restart" class="restarters">Instructions</a></li>
             </ul>
