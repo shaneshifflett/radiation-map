@@ -105,7 +105,7 @@
                 font-style:italic;
             }
             #map-info-container #legend{
-                width: 20%;
+                width: 22%;
                 position: absolute;
                 z-index: 120;
                 bottom: 0;
@@ -448,7 +448,7 @@
         <script type="text/template" id="elr-print-template">
             <ul class='elr-annotations'>
                 <li>
-                    <div style="text-align:center;width:250px;margin:0 auto;">
+                    <div style="text-align:center;margin:0 auto;">
                         <div style="font-size:10px;">
                             The radiation at this location is
                         </div>
@@ -459,14 +459,14 @@
                             the normal amount of background radiation.                    
                         </div>
                         <div style="font-size:2em;height:60px;border-top:2px dotted #999;">
-                            <div style="margin-left:24%;">
+                            <div style="margin-left:33%;margin-right:33%">
                                 <div style="float:left;padding:5px;border-right:2px dotted #999;"><span style="font-size:10px;display:block;">reading</span><%= cur %></div><div style="float:left;padding:5px;"><span style="font-size:10px;display:block;">background</span><%= bg %></div>
                             </div>
                         </div>
                     </div>
                 </li>
                 <li class="citation">
-                The California Department of Public Health surveyed the northeastern section of the island in April 2011 for radiation. They found 93 locations where the radiation levels were at least double normal exposure rates or unsafe. <a href="#" id="proceed-0" class="restarters">Click here for more background.</a> 
+                The California Department of Public Health surveyed the northeastern section of the island in April 2011 for radiation. It found 93 locations where the radiation levels were at least double normal exposure rates or unsafe. <a href="#" id="proceed-0" class="restarters">Click here for more background.</a> 
                 </li>
                 <li class="citation">Values are in terms of counts per second (meaning the number of atoms in a given quantity of radioactive material that are detected by an instrument to have decayed in one second).</li>
                 <li class='citation'>Device was calibrated to detect radium-226 centered on the 1764.5 KeV energy line.</li>
@@ -477,9 +477,9 @@
         </script>
         <script type="text/template" id="unsafe-print-template">
             <ul class='unsafe-annotations'>
-                <li><span style="font-size:2em;"><%= level %>%</span><span style="font-size:12px;font-style:italic;">Percent of radiation exposure above annual dose limit.</span></li>
+                <li><span style="font-size:2em;"><%= level %></span><span style="font-size:12px;font-style:italic;">percent of radiation exposure above annual dose limit.</span></li>
                 <li class="citation">
-                The California Department of Public Health surveyed the northeastern section of the island in April 2011 for radiation. They found 93 locations where the radiation levels were at least double normal exposure rates or unsafe. <a href="#" id="proceed-0" class="restarters">Click here for more background.</a> 
+                The California Department of Public Health surveyed the northeastern section of the island in April 2011 for radiation. It found 93 locations where the radiation levels were at least double normal exposure rates or unsafe. <a href="#" id="proceed-0" class="restarters">Click here for more background.</a> 
                 </li>
                 <li class="citation">Level assumes an individual remains at this location 24 hours a day for one year.</li>
                 <li class="citation">The state of California considers a safe dose level for an individual to be 100 millirem per year.</li>
@@ -502,7 +502,7 @@
                 At the top of the page there are six buttons. Each button turns on or off a layer. For example, if you don't want to see the plans for new housing units, click Redevelopment Sites to hide it. As you hover over the circles or radioactive markers, this window will update with facts about that site. Or, <a href="#" id="proceed-0" class="proceed">start the tour for more background</a>.
                 </li>
                 <li class="intro" style="display:none;">
-                With plans to redevelop the Treasure Island by adding new housing -- enough for 20,000 people -- The Navy will turn over to San Francisco a former Naval Station that was once site of a school training sailors in nuclear war. Originally, The Navy identified one site at the corner of Avenue M and Fifth Street as contaminated.
+                With plans to redevelop the Treasure Island by adding new housing &ndash; enough for 20,000 people &ndash; The Navy will turn over to San Francisco a former Naval Station that was once site of a school training sailors in nuclear war. Originally, The Navy identified one site at the corner of Avenue M and Fifth Street as contaminated.
                 <br/><br/>
                 <a href="#" id='proceed-begin' class="proceed">Start over</a> / <a href="#" id="proceed-1" class="proceed">Next</a> 
                 </li>
