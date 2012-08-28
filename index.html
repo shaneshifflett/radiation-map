@@ -169,9 +169,21 @@
             var poiTemplate = null;
             var elrTemplate = null;
             var unsafeTemplate = null;
+            var ADD_COMMAS = function(value){
+                nStr = value.toString() + '';
+                x = nStr.split('.');
+                x1 = x[0];
+                x2 = x.length > 1 ? '.' + x[1] : '';
+                var rgx = /(\d+)(\d{3})/;
+                while (rgx.test(x1)) {
+                    x1 = x1.replace(rgx, '$1' + ',' + '$2');
+                }
+                return x1 + x2;
+            };
             var printUnsafeLocation = function(obj){
                 $("#annotation").show();
                 var variables = obj.properties;
+                variables.level = ADD_COMMAS(variables.level);
                 $("#annotation").html(unsafeTemplate(variables));
                 $("#annotation ul").effect('highlight', {}, 100);
                 $(".restarters").unbind('click', restart).bind('click', restart);
@@ -206,6 +218,11 @@
                     var content = $("#intro-template").html();
                     $("#annotation").html(content);
                     $(".proceed").unbind('click', tour).bind('click', tour);
+                } else if(id === 'proceed-0'){
+                    var content = $("#intro-template").html();
+                    $("#annotation").html(content);
+                    $(".proceed").unbind('click', tour).bind('click', tour);
+                    tour(e);
                 }
                 return false;
             };
@@ -277,7 +294,6 @@
                 LayerInteraction.objects['redev'] = new LayerInteraction(irTiles, map, 1, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['newId'] = new LayerInteraction(newIdTiles, map, 2, hoverCallback, clickCallback, true);
                 LayerInteraction.objects['pastId'] = new LayerInteraction(pastIdTiles, map, 3, hoverCallback, clickCallback, true);
-                LayerInteraction.objects['rac'] = new LayerInteraction(racTiles, map, 4, racHoverCallback, clickCallback, true);
                 map.setView(center, 15);
 
                 var plotRadLocations = function(geojsonObjs, fillColor){
@@ -387,8 +403,8 @@
                     { colorStr: "#B2DFEE", text:"Future development"},
                     { colorStr: "#FFFF00", text: "Newly identified sites"},
                     { colorStr: "#FF0000", text: "Previously identified sites"},
-                    { colorStr: "#FF4800", text: "Elevated radiation locations"},
-                    { colorStr: "#A21F1F", text: "Unsafe radiation locations"},
+                    { colorStr: "#FF4800", text: "Elevated radiation sites"},
+                    { colorStr: "#A21F1F", text: "Unsafe radiation sites"},
                     { colorStr: "#FFFF00", text: "Points of interest"}
                 ];
                 var mlv = new MapLegendView("#legend", values, 'Potentially radioactive sites on Treasure Island', 'Source: U.S. Navy, Treasure Island Development Authority and California Department of Public Health');
@@ -410,8 +426,8 @@
                 <a href="#" id="redev" class="visible-layer  clicker"> Future Development</a> |
                 <a href="#" id="pastId" class="visible-layer  clicker">Previously Identified Sites</a> |
                 <a href="#" id="newId" class="visible-layer  clicker">Newly Identified Sites</a> |
-                <a href="#" id="elr" class="visible-layer clicker">Elevated Radiation Locations</a> |
-                <a href="#" id="unsafe" class="visible-layer  clicker">Unsafe Radiation Locations</a>
+                <a href="#" id="elr" class="visible-layer clicker">Elevated Radiation Sites</a> |
+                <a href="#" id="unsafe" class="visible-layer  clicker">Unsafe Radiation Sites</a>
             </div>
             <div id="annotation"></div>
             <div id="map"></div>
@@ -449,6 +465,9 @@
                         </div>
                     </div>
                 </li>
+                <li class="citation">
+                The California Department of Public Health surveyed the northeastern section of the island in April 2011 for radiation. They found 93 locations where the radiation levels were at least double normal exposure rates or unsafe. <a href="#" id="proceed-0" class="restarters">Click here for more background.</a> 
+                </li>
                 <li class="citation">Values are in terms of counts per second (meaning the number of atoms in a given quantity of radioactive material that are detected by an instrument to have decayed in one second).</li>
                 <li class='citation'>Device was calibrated to detect radium-226 centered on the 1764.5 KeV energy line.</li>
                 <li class="citation">Samples collected between 4/5/2011 and 4/7/2011</li>
@@ -459,6 +478,9 @@
         <script type="text/template" id="unsafe-print-template">
             <ul class='unsafe-annotations'>
                 <li><span style="font-size:2em;"><%= level %>%</span><span style="font-size:12px;font-style:italic;">Percent of radiation exposure above annual dose limit.</span></li>
+                <li class="citation">
+                The California Department of Public Health surveyed the northeastern section of the island in April 2011 for radiation. They found 93 locations where the radiation levels were at least double normal exposure rates or unsafe. <a href="#" id="proceed-0" class="restarters">Click here for more background.</a> 
+                </li>
                 <li class="citation">Level assumes an individual remains at this location 24 hours a day for one year.</li>
                 <li class="citation">The state of California considers a safe dose level for an individual to be 100 millirem per year.</li>
                 <li class="citation">Source: California Department of Public Health</li>
@@ -480,7 +502,7 @@
                 At the top of the page there are six buttons. Each button turns on or off a layer. For example, if you don't want to see the plans for new housing units, click Redevelopment Sites to hide it. As you hover over the circles or radioactive markers, this window will update with facts about that site. Or, <a href="#" id="proceed-0" class="proceed">start the tour for more background</a>.
                 </li>
                 <li class="intro" style="display:none;">
-                With plans to redevelop Treasure Island by adding new high-rises -- enough for 20,000 people -- The Navy will turn over parcels of land used to decontaminate potentially radioactive ships to the City of San Francisco. Originally, The Navy identified one site at the corner of Avenue M and Fifth Street as contaminated.
+                With plans to redevelop the Treasure Island by adding new housing -- enough for 20,000 people -- The Navy will turn over to San Francisco a former Naval Station that was once site of a school training sailors in nuclear war. Originally, The Navy identified one site at the corner of Avenue M and Fifth Street as contaminated.
                 <br/><br/>
                 <a href="#" id='proceed-begin' class="proceed">Start over</a> / <a href="#" id="proceed-1" class="proceed">Next</a> 
                 </li>
